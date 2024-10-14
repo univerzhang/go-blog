@@ -1,9 +1,10 @@
 package main
 
 import (
-	"encoding/json"
+	"html/template"
 	"log"
 	"net/http"
+	"os"
 )
 
 type IndexData struct {
@@ -12,12 +13,20 @@ type IndexData struct {
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 	var indexData IndexData
 	indexData.Title = "go-blog"
-	indexData.Desc = "first day"
-	jsonStr, _ := json.Marshal(indexData)
-	w.Write(jsonStr)
+	indexData.Desc = "first project"
+	t := template.New("index.html")
+	//get current path
+	path, _ := os.Getwd()
+
+	home := path + "/template/home.html"
+	header := path + "/template/layout/header.html"
+	footer := path + "/template/layout/footer.html"
+	post := path + "/template/layout/post-list.html"
+	pagination := path + "/template/layout/pagination.html"
+	t, _ = t.ParseFiles(path+"/template/index.html", home, header, footer, post, pagination)
+	t.Execute(w, indexData)
 }
 
 func main() {
