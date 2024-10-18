@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-type tomlConfig struct {
+type TomlConfig struct {
 	Viewer Viewer
 	System SystemConfig
 }
@@ -33,14 +33,18 @@ type SystemConfig struct {
 	ValineServerURL string
 }
 
-var Cfg *tomlConfig
+var Cfg *TomlConfig
 
 func init() {
-	Cfg = new(tomlConfig)
-	Cfg.System.AppName = "Go-blog"
+	Cfg = new(TomlConfig)
+	var err error
+	Cfg.System.CurrentDir, err = os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	Cfg.System.AppName = "mszlu-go-blog"
 	Cfg.System.Version = 1.0
-	Cfg.System.CurrentDir, _ = os.Getwd()
-	_, err := toml.DecodeFile("config/config.toml", &Cfg)
+	_, err = toml.DecodeFile("config/config.toml", &Cfg)
 	if err != nil {
 		panic(err)
 	}
